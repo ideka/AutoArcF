@@ -57,13 +57,13 @@ let updateRemote (remote:Remote) =
                 let equal = checksum = downloadedChecksum
                 printfn "%s == %s (%b)" checksum downloadedChecksum equal
                 if not <| equal then
-                    printfn ""
                     Console.ReadKey() |> ignore
                 equal
 
         if checksumVerified then
-            printfn ""
             File.WriteAllBytes(fullLocalPath, file)
+
+    printfn ""
 
 [<EntryPoint>]
 let main argv =
@@ -95,5 +95,9 @@ let main argv =
         localName = None;
     }
 
-    Process.Start(gameExeName) |> ignore
+    match Array.tryLast argv with
+    | None -> Process.Start(gameExeName)
+    | Some(arg) -> Process.Start(gameExeName, arg)
+    |> ignore
+
     0
